@@ -1,0 +1,38 @@
+{
+    "name": "xloit/xloit-bridge-doctrine-orm",
+    "type": "library",
+    "description": "Xloit Bridge Doctrine ORM Library",
+    "keywords": [
+        "xloit",
+        "doctrine-orm",
+        "library"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yudha Setiawan",
+            "email": "me@yudhasetiawan.com",
+            "homepage": "http://yudhasetiawan.com/"
+        }
+    ],
+    "require": {
+        "php": "^5.4 || ^7.0",
+        "doctrine/orm": ">=2.5,<2.7",
+        "xloit/xloit-exception": "^0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
+    "suggest": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Xloit\\Bridge\\Doctrine\\ORM\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "Xloit\\Bridge\\Doctrine\\ORM\\Tests\\": "tests/"
+        }
+    }
+}

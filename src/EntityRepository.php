@@ -1,0 +1,53 @@
+<?php
+/**
+ * This source file is part of Xloit project.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * <http://www.opensource.org/licenses/mit-license.php>
+ * If you did not receive a copy of the license and are unable to obtain it through the world-wide-web,
+ * please send an email to <license@xloit.com> so we can send you a copy immediately.
+ *
+ * @license   MIT
+ * @link      http://xloit.com
+ * @copyright Copyright (c) 2016, Xloit. All rights reserved.
+ */
+
+namespace Xloit\Bridge\Doctrine\ORM;
+
+use Doctrine\ORM\EntityRepository as AbstractEntityRepository;
+
+/**
+ * An {@link EntityRepository} class.
+ *
+ * @package Xloit\Bridge\Doctrine\ORM
+ */
+class EntityRepository extends AbstractEntityRepository implements EntityRepositoryInterface
+{
+    use EntityRepositoryTrait;
+
+    /**
+     * Creates a new QueryBuilder instance that is pre populated for this entity name.
+     *
+     * @return EntityQueryBuilder
+     */
+    public function createNewQueryBuilderInstance()
+    {
+        return new EntityQueryBuilder($this->getEntityManager(), $this);
+    }
+
+    /**
+     *
+     *
+     * @param EntityQueryBuilder $query               A Doctrine ORM query builder.
+     * @param bool               $fetchJoinCollection Whether the query joins a collection (true by default).
+     *
+     * @return Tools\Pagination\Paginator
+     */
+    public function getPaginator(EntityQueryBuilder $query, $fetchJoinCollection = true)
+    {
+        return new Tools\Pagination\Paginator($query, $fetchJoinCollection);
+    }
+}
