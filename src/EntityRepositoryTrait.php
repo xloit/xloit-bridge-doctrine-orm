@@ -105,10 +105,10 @@ trait EntityRepositoryTrait
             if (is_string($reflectionCLass->getConstant('ALIAS_NAME'))) {
                 $entityAlias = $reflectionCLass->getConstant('ALIAS_NAME');
             } else {
-                $entityAlias = end(explode('\\', $className));
+                $entityAlias = array_slice(explode('\\', $className), -1, 1)[0];
             }
 
-            $this->entityAlias = preg_replace('/[^\W]/', '', $entityAlias);
+            $this->entityAlias = preg_replace('/[^a-z]/i', '', $entityAlias);
         }
 
         return $this->entityAlias;
