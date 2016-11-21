@@ -745,18 +745,18 @@ class EntityQueryBuilder extends QueryBuilder
 
         switch ($field['type']) {
             case 'string':
-                settype($value, 'string');
+                $value = (string) $value;
                 break;
             case 'integer':
             case 'smallint':
                 #case 'bigint':  // Don't try to manipulate bigints?
-                settype($value, 'integer');
+                $value = (int) $value;
                 break;
             case 'boolean':
-                settype($value, 'boolean');
+                $value = (bool) $value;
                 break;
             case 'decimal':
-                settype($value, 'decimal');
+                $value = (float) $value;
                 break;
             case 'date':
                 if ($value && !$doNotCastDatetime) {
