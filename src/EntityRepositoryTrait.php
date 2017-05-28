@@ -82,7 +82,7 @@ trait EntityRepositoryTrait
      *
      * @param int $maxResults
      *
-     * @return static
+     * @return $this
      */
     public function setMaxResults($maxResults)
     {
@@ -95,6 +95,7 @@ trait EntityRepositoryTrait
      * Get related entity alias used in query. Will be used entity class name without namespace.
      *
      * @return string
+     * @throws \ReflectionException
      */
     public function getEntityAlias()
     {
@@ -140,6 +141,7 @@ trait EntityRepositoryTrait
      * @param string $alias
      *
      * @return ResultSetMappingBuilder
+     * @throws \ReflectionException
      */
     public function createResultSetMappingBuilder($alias = null)
     {
@@ -299,10 +301,10 @@ trait EntityRepositoryTrait
      * @param bool  $single
      *
      * @return array|string
-     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      * @throws \Doctrine\ORM\Mapping\MappingException
      * @throws \Doctrine\ORM\ORMInvalidArgumentException
      * @throws \Doctrine\ORM\ORMException
+     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     protected function getIdentifier($entity, $single = false)
     {
@@ -357,9 +359,9 @@ trait EntityRepositoryTrait
      * @param bool  $flush
      *
      * @return mixed
-     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      * @throws \Doctrine\ORM\ORMInvalidArgumentException
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function insertEntity($entity, $flush = true)
     {
@@ -375,9 +377,9 @@ trait EntityRepositoryTrait
      * @param bool  $flush
      *
      * @return mixed
-     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      * @throws \Doctrine\ORM\ORMInvalidArgumentException
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function updateEntity($entity, $flush = true)
     {
@@ -393,9 +395,9 @@ trait EntityRepositoryTrait
      * @param bool  $flush
      *
      * @return mixed
-     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      * @throws \Doctrine\ORM\ORMInvalidArgumentException
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function removeEntity($entity, $flush = true)
     {
@@ -422,9 +424,9 @@ trait EntityRepositoryTrait
      * @param bool  $flush
      *
      * @return mixed
-     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      * @throws \Doctrine\ORM\ORMInvalidArgumentException
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     protected function persist($entity, $flush = true)
     {
@@ -490,8 +492,8 @@ trait EntityRepositoryTrait
      * @param array $data
      *
      * @return mixed
-     * @throws \Doctrine\ORM\Mapping\MappingException
      * @throws \InvalidArgumentException
+     * @throws \Doctrine\ORM\Mapping\MappingException
      */
     public function create(array $data = [])
     {
@@ -521,7 +523,7 @@ trait EntityRepositoryTrait
                     } /** @noinspection UnSafeIsSetOverArrayInspection */
                     elseif (isset($data[$association]) && is_scalar($data[$association])) {
                         $targetIdentifier = $data[$association];
-                        $targetEntity = $targetEntityRepository->find($targetIdentifier);
+                        $targetEntity     = $targetEntityRepository->find($targetIdentifier);
 
                         if (null !== $targetEntity) {
                             $data[$association] = $targetEntity;
@@ -568,6 +570,7 @@ trait EntityRepositoryTrait
                     $newValId    = $unitOfWork->getEntityIdentifier($value);
                     $targetClass = $entityManager->getClassMetadata($associationMapping['targetEntity']);
 
+                    /** @noinspection ForeachSourceInspection */
                     foreach ($associationMapping['joinColumns'] as $joinColumn) {
                         $sourceColumn = $joinColumn['name'];
                         $targetColumn = $joinColumn['referencedColumnName'];

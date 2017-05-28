@@ -29,9 +29,9 @@ class Expr extends DoctrineExpr
     /**
      * Creates an instance of range, with the given argument.
      *
-     * @param mixed   $val Valued to be inspected by range values.
-     * @param integer $x   Starting range value to be used.
-     * @param integer $y   End point value to be used.
+     * @param mixed $val Valued to be inspected by range values.
+     * @param int   $x   Starting range value to be used.
+     * @param int   $y   End point value to be used.
      *
      * @return DoctrineExpr\Andx
      */
@@ -43,11 +43,11 @@ class Expr extends DoctrineExpr
     /**
      * Creates an instance of NOT BETWEEN() function, with the given argument.
      *
-     * @param mixed   $val Valued to be inspected by range values.
-     * @param integer $x   Starting range value to be used in BETWEEN() function.
-     * @param integer $y   End point value to be used in BETWEEN() function.
+     * @param mixed $val Valued to be inspected by range values.
+     * @param int   $x   Starting range value to be used in BETWEEN() function.
+     * @param int   $y   End point value to be used in BETWEEN() function.
      *
-     * @return DoctrineExpr\Func A NOT BETWEEN expression.
+     * @return string A NOT BETWEEN expression.
      */
     public function notBetween($val, $x, $y)
     {

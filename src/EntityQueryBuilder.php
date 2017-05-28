@@ -21,7 +21,6 @@ use DateTime;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Util\Inflector;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository as DoctrineEntityRepository;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query as DoctrineQuery;
 use Doctrine\ORM\Query\Parameter;
@@ -33,19 +32,19 @@ use ReflectionClass;
  *
  * @package Xloit\Bridge\Doctrine\ORM
  *
- * @method EntityQueryBuilder select(mixed $select = null)
- * @method EntityQueryBuilder addSelect(mixed $select = null)
- * @method EntityQueryBuilder distinct(bool $flag = true)
- * @method EntityQueryBuilder indexBy(string $alias, string $indexBy)
+ * @method EntityQueryBuilder select($select = null)
+ * @method EntityQueryBuilder addSelect($select = null)
+ * @method EntityQueryBuilder distinct($flag = true)
+ * @method EntityQueryBuilder indexBy($alias, $indexBy)
  * @method EntityQueryBuilder join($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
  * @method EntityQueryBuilder innerJoin($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
  * @method EntityQueryBuilder leftJoin($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
- * @method EntityQueryBuilder where(mixed $predicates)
- * @method EntityQueryBuilder andWhere($arguments)
- * @method EntityQueryBuilder orWhere($arguments)
- * @method EntityQueryBuilder having(mixed $having)
- * @method EntityQueryBuilder andHaving(mixed $having)
- * @method EntityQueryBuilder orHaving(mixed $having)
+ * @method EntityQueryBuilder where($predicates)
+ * @method EntityQueryBuilder andWhere($where)
+ * @method EntityQueryBuilder orWhere($where)
+ * @method EntityQueryBuilder having($having)
+ * @method EntityQueryBuilder andHaving($having)
+ * @method EntityQueryBuilder orHaving($having)
  * @method EntityQueryBuilder addCriteria(Criteria $criteria)
  */
 class EntityQueryBuilder extends QueryBuilder
@@ -92,12 +91,12 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Configure query to work with repository entity
+     * Configure query to work with repository entity.
      *
      * @param string $alias
-     * @param string $indexBy The index for the from
+     * @param string $indexBy The index for the from.
      *
-     * @return static
+     * @return $this
      */
     public function selectFromRepositoryEntity($alias = null, $indexBy = null)
     {
@@ -119,7 +118,7 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param EntityRepositoryInterface $repository
      *
-     * @return static
+     * @return $this
      */
     public function setRepository(EntityRepositoryInterface $repository)
     {
@@ -131,7 +130,7 @@ class EntityQueryBuilder extends QueryBuilder
     /**
      *
      *
-     * @return DoctrineEntityRepository
+     * @return EntityRepositoryInterface
      */
     public function getRepository()
     {
@@ -230,7 +229,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $delete The class/type whose instances are subject to the deletion.
      * @param string $alias  The class/type alias used in the constructed query.
      *
-     * @return static This QueryBuilder instance.
+     * @return $this This QueryBuilder instance.
      */
     public function delete($delete = null, $alias = null)
     {
@@ -259,7 +258,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $update The class/type whose instances are subject to the update.
      * @param string $alias  The class/type alias used in the constructed query.
      *
-     * @return static This QueryBuilder instance.
+     * @return $this This QueryBuilder instance.
      */
     public function update($update = null, $alias = null)
     {
@@ -288,7 +287,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $alias   The alias of the class.
      * @param string $indexBy The index for the from.
      *
-     * @return static This QueryBuilder instance.
+     * @return $this This QueryBuilder instance.
      */
     public function from($from = null, $alias = null, $indexBy = null)
     {
@@ -316,7 +315,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $key   The key/field to set.
      * @param string $value The value, expression, placeholder, etc.
      *
-     * @return static This QueryBuilder instance.
+     * @return $this This QueryBuilder instance.
      */
     public function set($key, $value)
     {
@@ -329,7 +328,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param int $maxResults
      * @param int $offset
      *
-     * @return static
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
     public function limit($maxResults, $offset = null)
@@ -376,7 +375,7 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param string $groupBy The grouping expression.
      *
-     * @return static
+     * @return $this
      */
     public function groupBy($groupBy)
     {
@@ -407,7 +406,7 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param string $groupBy The grouping expression.
      *
-     * @return static
+     * @return $this
      */
     public function addGroupBy($groupBy)
     {
@@ -428,7 +427,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $sort  The ordering expression.
      * @param string $order The ordering direction.
      *
-     * @return static
+     * @return $this
      */
     public function orderBy($sort, $order = null)
     {
@@ -445,7 +444,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $sort  The ordering expression.
      * @param string $order The ordering direction.
      *
-     * @return static
+     * @return $this
      */
     public function addOrderBy($sort, $order = null)
     {
@@ -461,7 +460,7 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param string $column
      *
-     * @return static
+     * @return $this
      */
     public function orderAsc($column)
     {
@@ -473,7 +472,7 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param string $column
      *
-     * @return static
+     * @return $this
      */
     public function orderDesc($column)
     {
@@ -485,7 +484,7 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param string $column
      *
-     * @return static
+     * @return $this
      */
     public function addOrderAscBy($column)
     {
@@ -497,7 +496,7 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param string $column
      *
-     * @return static
+     * @return $this
      */
     public function addOrderDescBy($column)
     {
@@ -505,13 +504,13 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Limit results with selected page
+     * Limit results with selected page.
      *
      * @param int $page
      * @param int $itemsPerPage
      *
-     * @return static
-     * @throws Exception\InvalidArgumentException
+     * @return $this
+     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function paginate($page = 1, $itemsPerPage = 10)
     {
@@ -539,14 +538,14 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Fetch first entity
+     * Fetch first entity.
      *
      * @param array $parameters
      * @param int   $hydrationMode
      *
      * @return mixed|null
-     * @throws Exception\InvalidArgumentException
      * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function fetchOne(array $parameters = [], $hydrationMode = null)
     {
@@ -557,15 +556,15 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Fetch first column of first result row
+     * Fetch first column of first result row.
      *
      * @param array $parameters
      * @param int   $hydrationMode
      *
      * @return mixed
-     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\NoResultException
+     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function fetchSingle(array $parameters = [], $hydrationMode = null)
     {
@@ -576,7 +575,7 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Fetch first column of first result row
+     * Fetch first column of first result row.
      *
      * @param array $parameters
      *
@@ -591,7 +590,7 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Fetch all entities
+     * Fetch all entities.
      *
      * @param array $parameters
      * @param int   $hydrationMode
@@ -606,7 +605,7 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Fetch all entities
+     * Fetch all entities.
      *
      * @param array $parameters
      *
@@ -618,7 +617,7 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Fetch all entities
+     * Fetch all entities.
      *
      * @param array $parameters
      *
@@ -630,7 +629,7 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Fetch all entities
+     * Fetch all entities.
      *
      * @param array $parameters
      *
@@ -646,7 +645,7 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param array $parameters
      *
-     * @return static
+     * @return $this
      */
     public function appendParameters($parameters)
     {
@@ -674,13 +673,13 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Auto append parameter and replace them with the parameter name
+     * Auto append parameter and replace them with the parameter name.
      *
      * @param mixed  $value
      * @param string $type
      * @param string $columnName
      *
-     * @return string The parameter name
+     * @return string The parameter name.
      */
     public function param($value, $type = null, $columnName = 'p')
     {
@@ -786,7 +785,7 @@ class EntityQueryBuilder extends QueryBuilder
                 }
                 break;
             case 'float':
-                settype($value, 'float');
+                $value = (float) $value;
                 break;
             default:
                 break;
@@ -826,10 +825,9 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $method
      * @param array  $arguments
      *
-     * @return static
-     * @throws ORMException
-     * @throws Exception\BadMethodCallException If the method called is an invalid find* method or no find* method
-     *                                          at all and therefore an invalid method call.
+     * @return $this
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\BadMethodCallException
      */
     public function __call($method, $arguments)
     {
@@ -906,7 +904,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param bool   $prefix
      *
      * @return array
-     * @throws ORMException
+     * @throws \Doctrine\ORM\ORMException
      */
     protected function parseCallMethods($method, array $lists, array $arguments, $prefix = true)
     {
@@ -932,7 +930,7 @@ class EntityQueryBuilder extends QueryBuilder
             if ($prefix && strpos($method, $name) === 0) {
                 $position = 0;
             } elseif (!$prefix) {
-                $position = strpos($method, $name, count($name));
+                $position = strpos($method, $name, strlen($name));
             }
 
             if ($position !== false) {
@@ -969,7 +967,7 @@ class EntityQueryBuilder extends QueryBuilder
         ];
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection
+    /**
      * A callFunctionalityFields function.
      *
      * @param string $fieldName
@@ -977,7 +975,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param array  $arguments
      * @param string $condition
      *
-     * @return static
+     * @return $this
      */
     private function callFunctionalityFields($fieldName, $methodName, array $arguments = [], $condition = null)
     {
@@ -1034,7 +1032,7 @@ class EntityQueryBuilder extends QueryBuilder
         return $this;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection
+    /**
      * A callWhereClauseFields function.
      *
      * @param string $fieldName
@@ -1042,7 +1040,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param array  $arguments
      * @param string $condition
      *
-     * @return static
+     * @return $this
      */
     private function callWhereClauseFields($fieldName, $methodName, array $arguments = [], $condition = null)
     {

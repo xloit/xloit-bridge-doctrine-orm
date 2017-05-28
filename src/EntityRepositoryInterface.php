@@ -39,7 +39,7 @@ interface EntityRepositoryInterface extends ObjectRepository, Selectable
      *
      * @param int $maxResults
      *
-     * @return static
+     * @return $this
      */
     public function setMaxResults($maxResults);
 

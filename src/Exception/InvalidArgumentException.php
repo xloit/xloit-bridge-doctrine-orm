@@ -20,7 +20,7 @@ namespace Xloit\Bridge\Doctrine\ORM\Exception;
 use Xloit\Exception\Logic\InvalidArgumentException as AbstractInvalidArgumentException;
 
 /**
- * A {@link InvalidArgumentException} class.
+ * An {@link InvalidArgumentException} class.
  *
  * @package Xloit\Bridge\Doctrine\ORM\Exception
  */

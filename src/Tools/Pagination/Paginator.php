@@ -62,7 +62,7 @@ class Paginator extends DoctrinePaginator
      *
      * @param QueryBuilder $queryBuilder
      *
-     * @return static
+     * @return $this
      */
     public function setQueryBuilder(QueryBuilder $queryBuilder)
     {
