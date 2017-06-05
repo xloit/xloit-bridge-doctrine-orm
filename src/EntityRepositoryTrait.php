@@ -129,6 +129,7 @@ trait EntityRepositoryTrait
      * @param string $indexBy The index for the from.
      *
      * @return EntityQueryBuilder
+     * @throws \ReflectionException
      */
     public function createQueryBuilder($alias = null, $indexBy = null)
     {
@@ -172,6 +173,7 @@ trait EntityRepositoryTrait
      * Finds entity ids.
      *
      * @return array
+     * @throws \ReflectionException
      */
     public function findAllIdentifiers()
     {
@@ -192,6 +194,7 @@ trait EntityRepositoryTrait
      * @param string $column
      *
      * @return mixed
+     * @throws \ReflectionException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
@@ -211,6 +214,7 @@ trait EntityRepositoryTrait
      * @param string $column
      *
      * @return mixed
+     * @throws \ReflectionException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
@@ -230,6 +234,7 @@ trait EntityRepositoryTrait
      * @param string $column
      *
      * @return mixed
+     * @throws \ReflectionException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
@@ -249,6 +254,7 @@ trait EntityRepositoryTrait
      * @param string $column
      *
      * @return mixed
+     * @throws \ReflectionException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
@@ -269,6 +275,7 @@ trait EntityRepositoryTrait
      * @param int $perPage
      *
      * @return Tools\Pagination\Paginator
+     * @throws \ReflectionException
      * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function paginate($page = 1, $perPage = null)
