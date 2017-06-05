@@ -96,7 +96,8 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $alias
      * @param string $indexBy The index for the from.
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     public function selectFromRepositoryEntity($alias = null, $indexBy = null)
     {
@@ -116,25 +117,25 @@ class EntityQueryBuilder extends QueryBuilder
     /**
      *
      *
+     * @return EntityRepositoryInterface
+     */
+    public function getRepository()
+    {
+        return $this->repository;
+    }
+
+    /**
+     *
+     *
      * @param EntityRepositoryInterface $repository
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
      */
     public function setRepository(EntityRepositoryInterface $repository)
     {
         $this->repository = $repository;
 
         return $this;
-    }
-
-    /**
-     *
-     *
-     * @return EntityRepositoryInterface
-     */
-    public function getRepository()
-    {
-        return $this->repository;
     }
 
     /**
@@ -153,19 +154,10 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Get related entity class name
-     *
-     * @return string
-     */
-    protected function getEntityClassName()
-    {
-        return $this->getRepository()->getClassName();
-    }
-
-    /**
      * Get related entity alias used in query. Will be used entity class name without namespace
      *
      * @return string
+     * @throws \ReflectionException
      */
     public function getEntityAlias()
     {
@@ -230,6 +222,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $alias  The class/type alias used in the constructed query.
      *
      * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     public function delete($delete = null, $alias = null)
     {
@@ -241,7 +234,9 @@ class EntityQueryBuilder extends QueryBuilder
             }
         }
 
-        return parent::delete($delete, $alias);
+        parent::delete($delete, $alias);
+
+        return $this;
     }
 
     /**
@@ -259,6 +254,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $alias  The class/type alias used in the constructed query.
      *
      * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     public function update($update = null, $alias = null)
     {
@@ -270,7 +266,9 @@ class EntityQueryBuilder extends QueryBuilder
             }
         }
 
-        return parent::update($update, $alias);
+        parent::update($update, $alias);
+
+        return $this;
     }
 
     /**
@@ -288,6 +286,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $indexBy The index for the from.
      *
      * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     public function from($from = null, $alias = null, $indexBy = null)
     {
@@ -299,7 +298,9 @@ class EntityQueryBuilder extends QueryBuilder
             }
         }
 
-        return parent::from($from, $alias, $indexBy = null);
+        parent::from($from, $alias, $indexBy = null);
+
+        return $this;
     }
 
     /**
@@ -316,10 +317,114 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $value The value, expression, placeholder, etc.
      *
      * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     public function set($key, $value)
     {
-        return parent::set($this->alias($key), $value);
+        parent::set($this->alias($key), $value);
+
+        return $this;
+    }
+
+    /**
+     * Specifies a grouping over the results of the query.
+     * Replaces any previously specified groupings, if any.
+     *
+     * <code>
+     *     $qb = $em->createQueryBuilder()
+     *         ->select('u')
+     *         ->from('User', 'u')
+     *         ->groupBy('u.id');
+     * </code>
+     *
+     * @param string $groupBy The grouping expression.
+     *
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
+     */
+    public function groupBy($groupBy)
+    {
+        /** @var array $groupFields */
+        $groupFields = func_get_args();
+
+        if (count($groupFields) > 0) {
+            parent::groupBy($this->alias(array_shift($groupFields)));
+
+            foreach ($groupFields as $group) {
+                $this->addGroupBy($group);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds a grouping expression to the query.
+     *
+     * <code>
+     *     $qb = $em->createQueryBuilder()
+     *         ->select('u')
+     *         ->from('User', 'u')
+     *         ->groupBy('u.lastLogin')
+     *         ->addGroupBy('u.createdAt');
+     * </code>
+     *
+     * @param string $groupBy The grouping expression.
+     *
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
+     */
+    public function addGroupBy($groupBy)
+    {
+        /** @var array $groupFields */
+        $groupFields = func_get_args();
+
+        foreach ($groupFields as $group) {
+            parent::addGroupBy($this->alias($group));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Specifies an ordering for the query results.
+     * Replaces any previously specified orderings, if any.
+     *
+     * @param string $sort  The ordering expression.
+     * @param string $order The ordering direction.
+     *
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
+     */
+    public function orderBy($sort, $order = null)
+    {
+        if (is_string($sort)) {
+            $sort = $this->alias($sort);
+        }
+
+        parent::orderBy($sort, $order);
+
+        return $this;
+    }
+
+    /**
+     * Adds an ordering to the query results.
+     *
+     * @param string $sort  The ordering expression.
+     * @param string $order The ordering direction.
+     *
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
+     */
+    public function addOrderBy($sort, $order = null)
+    {
+        if (is_string($sort)) {
+            $sort = $this->alias($sort);
+        }
+
+        parent::addOrderBy($sort, $order);
+
+        return $this;
     }
 
     /**
@@ -328,7 +433,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param int $maxResults
      * @param int $offset
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
      * @throws Exception\InvalidArgumentException
      */
     public function limit($maxResults, $offset = null)
@@ -363,104 +468,12 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Specifies a grouping over the results of the query.
-     * Replaces any previously specified groupings, if any.
-     *
-     * <code>
-     *     $qb = $em->createQueryBuilder()
-     *         ->select('u')
-     *         ->from('User', 'u')
-     *         ->groupBy('u.id');
-     * </code>
-     *
-     * @param string $groupBy The grouping expression.
-     *
-     * @return $this
-     */
-    public function groupBy($groupBy)
-    {
-        /** @var array $groupFields */
-        $groupFields = func_get_args();
-
-        if (count($groupFields) > 0) {
-            parent::groupBy($this->alias(array_shift($groupFields)));
-
-            foreach ($groupFields as $group) {
-                $this->addGroupBy($group);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Adds a grouping expression to the query.
-     *
-     * <code>
-     *     $qb = $em->createQueryBuilder()
-     *         ->select('u')
-     *         ->from('User', 'u')
-     *         ->groupBy('u.lastLogin')
-     *         ->addGroupBy('u.createdAt');
-     * </code>
-     *
-     * @param string $groupBy The grouping expression.
-     *
-     * @return $this
-     */
-    public function addGroupBy($groupBy)
-    {
-        /** @var array $groupFields */
-        $groupFields = func_get_args();
-
-        foreach ($groupFields as $group) {
-            parent::addGroupBy($this->alias($group));
-        }
-
-        return $this;
-    }
-
-    /**
-     * Specifies an ordering for the query results.
-     * Replaces any previously specified orderings, if any.
-     *
-     * @param string $sort  The ordering expression.
-     * @param string $order The ordering direction.
-     *
-     * @return $this
-     */
-    public function orderBy($sort, $order = null)
-    {
-        if (is_string($sort)) {
-            $sort = $this->alias($sort);
-        }
-
-        return parent::orderBy($sort, $order);
-    }
-
-    /**
-     * Adds an ordering to the query results.
-     *
-     * @param string $sort  The ordering expression.
-     * @param string $order The ordering direction.
-     *
-     * @return $this
-     */
-    public function addOrderBy($sort, $order = null)
-    {
-        if (is_string($sort)) {
-            $sort = $this->alias($sort);
-        }
-
-        return parent::addOrderBy($sort, $order);
-    }
-
-    /**
      *
      *
      * @param string $column
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     public function orderAsc($column)
     {
@@ -472,7 +485,8 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param string $column
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     public function orderDesc($column)
     {
@@ -484,7 +498,8 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param string $column
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     public function addOrderAscBy($column)
     {
@@ -496,7 +511,8 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param string $column
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     public function addOrderDescBy($column)
     {
@@ -509,7 +525,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param int $page
      * @param int $itemsPerPage
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
      * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function paginate($page = 1, $itemsPerPage = 10)
@@ -645,7 +661,7 @@ class EntityQueryBuilder extends QueryBuilder
      *
      * @param array $parameters
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
      */
     public function appendParameters($parameters)
     {
@@ -707,6 +723,7 @@ class EntityQueryBuilder extends QueryBuilder
      * @param string $column
      *
      * @return string
+     * @throws \ReflectionException
      */
     public function alias($column)
     {
@@ -721,111 +738,13 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     *
-     *
-     * @param string $fieldName
-     * @param mixed  $value
-     * @param string $format
-     * @param bool   $doNotCastDatetime
-     *
-     * @return string
-     * @throws \Doctrine\ORM\Mapping\MappingException
-     */
-    protected function typeCastField($fieldName, $value, $format = null, $doNotCastDatetime = false)
-    {
-        $className     = $this->getEntityClassName();
-        $classMetadata = $this->getEntityManager()->getClassMetadata($className);
-
-        if (!$classMetadata->hasField($fieldName)) {
-            return $value;
-        }
-
-        $field = $classMetadata->getFieldMapping($fieldName);
-
-        switch ($field['type']) {
-            case 'string':
-                $value = (string) $value;
-                break;
-            case 'integer':
-            case 'smallint':
-                #case 'bigint':  // Don't try to manipulate bigints?
-                $value = (int) $value;
-                break;
-            case 'boolean':
-                $value = (bool) $value;
-                break;
-            case 'decimal':
-                $value = (float) $value;
-                break;
-            case 'date':
-                if ($value && !$doNotCastDatetime) {
-                    if (!$format) {
-                        $format = 'Y-m-d';
-                    }
-
-                    $value = DateTime::createFromFormat($format, $value);
-                }
-                break;
-            case 'time':
-                if ($value && !$doNotCastDatetime) {
-                    if (!$format) {
-                        $format = 'H:i:s';
-                    }
-
-                    $value = DateTime::createFromFormat($format, $value);
-                }
-                break;
-            case 'datetime':
-                if ($value && !$doNotCastDatetime) {
-                    if (!$format) {
-                        $format = 'Y-m-d H:i:s';
-                    }
-
-                    $value = DateTime::createFromFormat($format, $value);
-                }
-                break;
-            case 'float':
-                $value = (float) $value;
-                break;
-            default:
-                break;
-        }
-
-        return $value;
-    }
-
-    /**
-     * Find unused parameter name
-     *
-     * @param string $columnName
-     *
-     * @return string
-     */
-    protected function findUnusedParameterName($columnName = 'p')
-    {
-        $parameters = $this->getParameters()->map(
-            function($parameter) {
-                /** @var Parameter $parameter */
-                return $parameter->getName();
-            }
-        );
-        $index      = 0;
-
-        do {
-            $parameterName = $columnName . $index;
-            $index++;
-        } while ($parameters->contains($parameterName));
-
-        return $parameterName;
-    }
-
-    /**
      * Adds support for magic finders.
      *
      * @param string $method
      * @param array  $arguments
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      * @throws \Doctrine\ORM\ORMException
      * @throws \Xloit\Bridge\Doctrine\ORM\Exception\BadMethodCallException
      */
@@ -848,7 +767,7 @@ class EntityQueryBuilder extends QueryBuilder
                 ]
             ],
             'callWhereClauseFields'   => [
-                'prefix'  => false,
+                'prefix'  => true,
                 'methods' => [
                     'GreaterThanEqual' => true,
                     'GreaterThan'      => true,
@@ -892,7 +811,124 @@ class EntityQueryBuilder extends QueryBuilder
             throw new Exception\BadMethodCallException(sprintf('Undefined method "%s".', $method));
         }
 
+        if ($functionName === 'callFunctionalityFields') {
+            return $this->callFunctionalityFields($fieldName, $methodName, $arguments, $condition);
+        }
+
+        if ($functionName === 'callWhereClauseFields') {
+            return $this->callWhereClauseFields($fieldName, $methodName, $arguments, $condition);
+        }
+
         return $this->{$functionName}($fieldName, $methodName, $arguments, $condition);
+    }
+
+    /**
+     * Get related entity class name
+     *
+     * @return string
+     */
+    protected function getEntityClassName()
+    {
+        return $this->getRepository()->getClassName();
+    }
+
+    /**
+     *
+     *
+     * @param string $fieldName
+     * @param mixed  $value
+     * @param string $format
+     * @param bool   $doNotCastDatetime
+     *
+     * @return string
+     * @throws \Doctrine\ORM\Mapping\MappingException
+     */
+    protected function typeCastField($fieldName, $value, $format = null, $doNotCastDatetime = false)
+    {
+        $className     = $this->getEntityClassName();
+        $classMetadata = $this->getEntityManager()->getClassMetadata($className);
+
+        if (!$classMetadata->hasField($fieldName)) {
+            return $value;
+        }
+
+        $field = $classMetadata->getFieldMapping($fieldName);
+
+        switch ($field['type']) {
+            case 'string':
+                $value = (string)$value;
+                break;
+            case 'integer':
+            case 'smallint':
+                #case 'bigint':  // Don't try to manipulate bigints?
+                $value = (int)$value;
+                break;
+            case 'boolean':
+                $value = (bool)$value;
+                break;
+            case 'decimal':
+                $value = (float)$value;
+                break;
+            case 'date':
+                if ($value && !$doNotCastDatetime) {
+                    if (!$format) {
+                        $format = 'Y-m-d';
+                    }
+
+                    $value = DateTime::createFromFormat($format, $value);
+                }
+                break;
+            case 'time':
+                if ($value && !$doNotCastDatetime) {
+                    if (!$format) {
+                        $format = 'H:i:s';
+                    }
+
+                    $value = DateTime::createFromFormat($format, $value);
+                }
+                break;
+            case 'datetime':
+                if ($value && !$doNotCastDatetime) {
+                    if (!$format) {
+                        $format = 'Y-m-d H:i:s';
+                    }
+
+                    $value = DateTime::createFromFormat($format, $value);
+                }
+                break;
+            case 'float':
+                $value = (float)$value;
+                break;
+            default:
+                break;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Find unused parameter name.
+     *
+     * @param string $columnName
+     *
+     * @return string
+     */
+    protected function findUnusedParameterName($columnName = 'p')
+    {
+        $parameters = $this->getParameters()->map(
+            function($parameter) {
+                /** @var Parameter $parameter */
+                return $parameter->getName();
+            }
+        );
+        $index      = 0;
+
+        do {
+            $parameterName = $columnName . $index;
+            $index++;
+        } while ($parameters->contains($parameterName));
+
+        return $parameterName;
     }
 
     /**
@@ -975,7 +1011,8 @@ class EntityQueryBuilder extends QueryBuilder
      * @param array  $arguments
      * @param string $condition
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     private function callFunctionalityFields($fieldName, $methodName, array $arguments = [], $condition = null)
     {
@@ -1040,7 +1077,8 @@ class EntityQueryBuilder extends QueryBuilder
      * @param array  $arguments
      * @param string $condition
      *
-     * @return $this
+     * @return $this This QueryBuilder instance.
+     * @throws \ReflectionException
      */
     private function callWhereClauseFields($fieldName, $methodName, array $arguments = [], $condition = null)
     {
