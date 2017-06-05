@@ -108,7 +108,6 @@ interface EntityRepositoryInterface extends ObjectRepository, Selectable
      * @param int $perPage
      *
      * @return Tools\Pagination\Paginator
-     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function paginate($page = 1, $perPage = null);
 
@@ -128,9 +127,6 @@ interface EntityRepositoryInterface extends ObjectRepository, Selectable
      * @param bool  $flush
      *
      * @return mixed
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\ORMInvalidArgumentException
-     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function insertEntity($entity, $flush = true);
 
@@ -141,9 +137,6 @@ interface EntityRepositoryInterface extends ObjectRepository, Selectable
      * @param bool  $flush
      *
      * @return mixed
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\ORMInvalidArgumentException
-     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function updateEntity($entity, $flush = true);
 
@@ -154,9 +147,6 @@ interface EntityRepositoryInterface extends ObjectRepository, Selectable
      * @param bool  $flush
      *
      * @return mixed
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\ORMInvalidArgumentException
-     * @throws \Xloit\Bridge\Doctrine\ORM\Exception\InvalidArgumentException
      */
     public function removeEntity($entity, $flush = true);
 
@@ -176,8 +166,6 @@ interface EntityRepositoryInterface extends ObjectRepository, Selectable
      * @param array $data
      *
      * @return mixed
-     * @throws \Doctrine\ORM\Mapping\MappingException
-     * @throws \InvalidArgumentException
      */
     public function create(array $data = []);
 
@@ -187,7 +175,6 @@ interface EntityRepositoryInterface extends ObjectRepository, Selectable
      * @param mixed $entity
      *
      * @return array
-     * @throws \Doctrine\ORM\Mapping\MappingException
      */
     public function toArray($entity);
 
